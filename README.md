@@ -7,6 +7,7 @@ The step takes the following arguments:
 # For configuring AWS CLI
 * **access-key**: The AWS access key for Werker to use
 * **secret-access-key**: The AWS secret access key for Werker to use
+* **region**: The AWS region to use
 # Setup application
 * **application-name**: The name of the application in CodeDeploy
 # Setup deployment config
