@@ -1,5 +1,5 @@
 name: deploy-via-codedeploy
-version: 2.0.2
+version: 2.0.3
 description: A Wercker step for creating and deploying an artefact with the help of Amazon CodeDeploy.
 keywords:
   - aws

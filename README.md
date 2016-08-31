@@ -38,7 +38,7 @@ steps:
         access-key: <AWS ACCESS KEY>
         secret-access-key: <AWS ACCESS KEY>
         application-name: DemoApp
-        deployment-config-name: DemoApp
+        deployment-config-name: CodeDeployDefault.AllAtOnce
         deployment-group: DemoAppGroup
         service-role-arn: arn:aws:iam::80398EXAMPLE:role/CodeDeployDemoRole
         deployment-config-name: DemoAppConfig                         
