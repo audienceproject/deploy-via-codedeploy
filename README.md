@@ -5,27 +5,27 @@ The prerequisite [AWS Command Line Interface](https://aws.amazon.com/cli/) will 
 
 The step takes the following arguments:
 # For configuring AWS CLI
-* **wercker_aws_access_key**: The AWS access key for Werker to use
-* **wercker_aws_secret_access_key**: The AWS secret access key for Werker to use
+* **access-key**: The AWS access key for Werker to use
+* **secret-access-key**: The AWS secret access key for Werker to use
 # Setup application
-* **aws_application_name**: The name of the application in CodeDeploy
+* **application-name**: The name of the application in CodeDeploy
 # Setup deployment config
-* **aws_deployment_config_name**: The name of the deployment configuration in CodeDeploy
-* **aws_minimum_healthy_hosts**: (optional) The minimum number of healthy hosts during deployment
+* **deployment-config-name**: The name of the deployment configuration in CodeDeploy
+* **minimum-healthy-hosts**: (optional) The minimum number of healthy hosts during deployment
 # Setup deployment group
-* **aws_deployment_group**: Name of the deployment group in CodeDeploy
-* **aws_service_role_arn**: The service role ARN to use
-* **aws_auto_scaling_groups**: (optional)  
-* **aws_ec2_tag_filters**: (optional)
+* **deployment-group**: Name of the deployment group in CodeDeploy
+* **service-role-arn**: The service role ARN to use
+* **auto-scaling-groups**: (optional)  
+* **ec2-tag-filters**: (optional)
 # push application
-* **aws_s3_bucket**: The S3 bucket to use when pushing app to S3
-* **aws_s3_key**: The the key that identifies the file on S3 
-* **app_source_location**: the location of the app to bundle and push to S3
-* **aws_revision_description**: (optional) 
+* **s3-bucket**: The S3 bucket to use when pushing app to S3
+* **s3-key**: The the key that identifies the file on S3 
+* **app-source-location**: the location of the app to bundle and push to S3
+* **revision-description**: (optional) 
 # Register application version    
-* **aws_bundle_type**: The bundle type, defaults to zip
+* **bundle-type**: The bundle type, defaults to zip
 # Created deployment
-* **aws_deployment_description**: (optional)
+* **deployment-description**: (optional)
 
 For more info, see [Amazon Command Line Interface](http://docs.aws.amazon.com/cli/latest/reference/deploy)
 
@@ -34,16 +34,16 @@ For more info, see [Amazon Command Line Interface](http://docs.aws.amazon.com/cl
 ```
 steps:
     - audienceproject/deploy-via-codedeploy:
-        - wercker_aws_access_key: <AWS ACCESS KEY>
-        - wercker_aws_secret_access_key: <AWS ACCESS KEY>
-        - aws_application_name: DemoApp
-        - aws_deployment_config_name: DemoApp
-        - aws_deployment_group: DemoAppGroup
-        - aws_service_role_arn: arn:aws:iam::80398EXAMPLE:role/CodeDeployDemoRole
-        - aws_deployment_config_name: DemoAppConfig                         
-        - aws_ec2_tag_filters: Key=Name,Value=DemoServer,Type=KEY_AND_VALUE 
-        - aws_s3_bucket: my-apps-bucket
-        - aws_s3_key: demoapp/demoapp.zip
-        - app_source_location: /tmp/myapp/
-        - aws_bundle_type: zip
+        access-key: <AWS ACCESS KEY>
+        secret-access-key: <AWS ACCESS KEY>
+        application-name: DemoApp
+        deployment-config-name: DemoApp
+        deployment-group: DemoAppGroup
+        service-role-arn: arn:aws:iam::80398EXAMPLE:role/CodeDeployDemoRole
+        deployment-config-name: DemoAppConfig                         
+        ec2-tag-filters: Key=Name,Value=DemoServer,Type=KEY_AND_VALUE 
+        s3-bucket: my-apps-bucket
+        s3-key: demoapp/demoapp.zip
+        app-source-location: /tmp/myapp/
+        bundle-type: zip
 ```

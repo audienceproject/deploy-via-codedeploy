@@ -29,25 +29,25 @@ function usage() {
   echo
   bold "The following variables need to be set"
   echo "
-    WERCKER_AWS_ACCESS_KEY
-    WERCKER_AWS_SECRET_ACCESS_KEY
-    AWS_APPLICATION_NAME
-    AWS_DEPLOYMENT_CONFIG_NAME
-    AWS_DEPLOYMENT_GROUP
-    AWS_SERVICE_ROLE_ARN
-    AWS_S3_BUCKET
-    AWS_S3_KEY
-    APP_SOURCE_LOCATION
-    AWS_BUNDLE_TYPE
+    WERCKER_DEPLOY_VIA_CODEDEPLOY_ACCESS_KEY
+    WERCKER_DEPLOY_VIA_CODEDEPLOY_SECRET_ACCESS_KEY
+    WERCKER_DEPLOY_VIA_CODEDEPLOY_APPLICATION_NAME
+    WERCKER_DEPLOY_VIA_CODEDEPLOY_DEPLOYMENT_CONFIG_NAME
+    WERCKER_DEPLOY_VIA_CODEDEPLOY_DEPLOYMENT_GROUP
+    WERCKER_DEPLOY_VIA_CODEDEPLOY_SERVICE_ROLE_ARN
+    WERCKER_DEPLOY_VIA_CODEDEPLOY_S3_BUCKET
+    WERCKER_DEPLOY_VIA_CODEDEPLOY_S3_KEY
+    WERCKER_DEPLOY_VIA_CODEDEPLOY_APP_SOURCE_LOCATION
+    WERCKER_DEPLOY_VIA_CODEDEPLOY_BUNDLE_TYPE
     "
   bold "The following variables are optional "
   echo "
-    AWS_REVISION_DESCRIPTION
-    AWS_DEPLOYMENT_DESCRIPTION
-    AWS_AUTO_SCALING_GROUPS
-    AWS_EC2_TAG_FILTERS
-    AWS_MINIMUM_HEALTHY_HOSTS
-    AWS_DEPLOYMENT_CONFIG_NAME
+    WERCKER_DEPLOY_VIA_CODEDEPLOY_REVISION_DESCRIPTION
+    WERCKER_DEPLOY_VIA_CODEDEPLOY_DEPLOYMENT_DESCRIPTION
+    WERCKER_DEPLOY_VIA_CODEDEPLOY_AUTO_SCALING_GROUPS
+    WERCKER_DEPLOY_VIA_CODEDEPLOY_EC2_TAG_FILTERS
+    WERCKER_DEPLOY_VIA_CODEDEPLOY_MINIMUM_HEALTHY_HOSTS
+    WERCKER_DEPLOY_VIA_CODEDEPLOY_DEPLOYMENT_CONFIG_NAME
     "
   exit $1
 }
@@ -60,18 +60,18 @@ while [ "$1" != "" ]; do
   shift
 done
 
-[[ ${WERCKER_AWS_ACCESS_KEY} ]] || usage 1 "Please define WERCKER_AWS_ACCESS_KEY"
-[[ ${WERCKER_AWS_SECRET_ACCESS_KEY} ]] || usage 1 "Please define WERCKER_AWS_SECRET_ACCESS_KEY"
-[[ ${AWS_APPLICATION_NAME} ]] || usage 1 "Please define AWS_APPLICATION_NAME"
-[[ ${AWS_DEPLOYMENT_GROUP} ]] || usage 1 "Please define AWS_DEPLOYMENT_GROUP"
-[[ ${AWS_SERVICE_ROLE_ARN} ]] || usage 1 "Please define AWS_SERVICE_ROLE_ARN"
-[[ ${AWS_S3_BUCKET} ]] || usage 1 "Please define AWS_S3_BUCKET"
-[[ ${AWS_S3_KEY} ]] || usage 1 "Please define AWS_S3_KEY"
-[[ ${APP_SOURCE_LOCATION} ]] || usage 1 "Please define APP_SOURCE_LOCATION"
-[[ ${AWS_BUNDLE_TYPE} ]] || usage 1 "Please define AWS_BUNDLE_TYPE"
+[[ ${WERCKER_DEPLOY_VIA_CODEDEPLOY_ACCESS_KEY} ]] || usage 1 "Please define WERCKER_DEPLOY_VIA_CODEDEPLOY_ACCESS_KEY"
+[[ ${WERCKER_DEPLOY_VIA_CODEDEPLOY_SECRET_ACCESS_KEY} ]] || usage 1 "Please define WERCKER_DEPLOY_VIA_CODEDEPLOY_SECRET_ACCESS_KEY"
+[[ ${WERCKER_DEPLOY_VIA_CODEDEPLOY_APPLICATION_NAME} ]] || usage 1 "Please define WERCKER_DEPLOY_VIA_CODEDEPLOY_APPLICATION_NAME"
+[[ ${WERCKER_DEPLOY_VIA_CODEDEPLOY_DEPLOYMENT_GROUP} ]] || usage 1 "Please define WERCKER_DEPLOY_VIA_CODEDEPLOY_DEPLOYMENT_GROUP"
+[[ ${WERCKER_DEPLOY_VIA_CODEDEPLOY_SERVICE_ROLE_ARN} ]] || usage 1 "Please define WERCKER_DEPLOY_VIA_CODEDEPLOY_SERVICE_ROLE_ARN"
+[[ ${WERCKER_DEPLOY_VIA_CODEDEPLOY_S3_BUCKET} ]] || usage 1 "Please define WERCKER_DEPLOY_VIA_CODEDEPLOY_S3_BUCKET"
+[[ ${WERCKER_DEPLOY_VIA_CODEDEPLOY_S3_KEY} ]] || usage 1 "Please define WERCKER_DEPLOY_VIA_CODEDEPLOY_S3_KEY"
+[[ ${WERCKER_DEPLOY_VIA_CODEDEPLOY_APP_SOURCE_LOCATION} ]] || usage 1 "Please define APP_SOURCE_LOCATION"
+[[ ${WERCKER_DEPLOY_VIA_CODEDEPLOY_BUNDLE_TYPE} ]] || usage 1 "Please define WERCKER_DEPLOY_VIA_CODEDEPLOY_BUNDLE_TYPE"
 
-if [ -z ${AWS_DEPLOYMENT_CONFIG_NAME} ]; then
-  AWS_DEPLOYMENT_CONFIG_NAME="CodeDeployDefault.OneAtATime"
+if [ -z ${WERCKER_DEPLOY_VIA_CODEDEPLOY_DEPLOYMENT_CONFIG_NAME} ]; then
+  WERCKER_DEPLOY_VIA_CODEDEPLOY_DEPLOYMENT_CONFIG_NAME="CodeDeployDefault.OneAtATime"
 fi
 
 #Install awscli
@@ -83,55 +83,55 @@ else
 fi
 # ---------------------------------------------------------------------------
 info "Configuring awscli"
-aws configure set aws_access_key_id ${WERCKER_AWS_ACCESS_KEY} || error "Could not configure aws cli"
-aws configure set aws_secret_access_key ${WERCKER_AWS_SECRET_ACCESS_KEY} || error "Could not configure aws cli"
+aws configure set aws_access_key_id ${WERCKER_DEPLOY_VIA_CODEDEPLOY_ACCESS_KEY} || error "Could not configure aws cli"
+aws configure set aws_secret_access_key ${WERCKER_DEPLOY_VIA_CODEDEPLOY_SECRET_ACCESS_KEY} || error "Could not configure aws cli"
 
 # ---------------------------------------------------------------------------
-if aws deploy get-application --application-name ${AWS_APPLICATION_NAME} >/dev/null 2>&1; then 
+if aws deploy get-application --application-name ${WERCKER_DEPLOY_VIA_CODEDEPLOY_APPLICATION_NAME} >/dev/null 2>&1; then 
   info "Good. Application already created "
 else 
   warn "Warning. Creating application"
-  aws deploy create-application --application-name ${AWS_APPLICATION_NAME} || error "create-application failed";
+  aws deploy create-application --application-name ${WERCKER_DEPLOY_VIA_CODEDEPLOY_APPLICATION_NAME} || error "create-application failed";
 fi
 
 # ---------------------------------------------------------------------------
-if aws deploy get-deployment-config --deployment-config-name ${AWS_DEPLOYMENT_CONFIG_NAME} >/dev/null 2>&1; then
+if aws deploy get-deployment-config --deployment-config-name ${WERCKER_DEPLOY_VIA_CODEDEPLOY_DEPLOYMENT_CONFIG_NAME} >/dev/null 2>&1; then
   info "Good. Configuration already exists"
 else
   warn "Warning. Creating configuration"
-  CREATE_CMD="aws deploy create-deployment-config --deployment-config-name ${AWS_DEPLOYMENT_CONFIG_NAME}"
-  if [ -n "${AWS_MINIMUM_HEALTHY_HOSTS}" ]; then CREATE_CMD="${CREATE_CMD} --minimum-healthy-hosts ${AWS_MINIMUM_HEALTHY_HOSTS}"; fi
+  CREATE_CMD="aws deploy create-deployment-config --deployment-config-name ${WERCKER_DEPLOY_VIA_CODEDEPLOY_DEPLOYMENT_CONFIG_NAME}"
+  if [ -n "${WERCKER_DEPLOY_VIA_CODEDEPLOY_MINIMUM_HEALTHY_HOSTS}" ]; then CREATE_CMD="${CREATE_CMD} --minimum-healthy-hosts ${WERCKER_DEPLOY_VIA_CODEDEPLOY_MINIMUM_HEALTHY_HOSTS}"; fi
   ${CREATE_CMD} || error "create-deployment-gonfig failed"
 fi
 
 # ---------------------------------------------------------------------------
-if aws deploy get-deployment-group --application-name ${AWS_APPLICATION_NAME} --deployment-group-name ${AWS_DEPLOYMENT_GROUP} > /dev/null 2>&1; then
+if aws deploy get-deployment-group --application-name ${WERCKER_DEPLOY_VIA_CODEDEPLOY_APPLICATION_NAME} --deployment-group-name ${WERCKER_DEPLOY_VIA_CODEDEPLOY_DEPLOYMENT_GROUP} > /dev/null 2>&1; then
   info "Good. Deployment group already exists"
 else
   warn "Warning. Creating deployment group"
-  DEPLOY_CMD="aws deploy create-deployment-group --application-name ${AWS_APPLICATION_NAME} --deployment-group-name ${AWS_DEPLOYMENT_GROUP} --service-role-arn ${AWS_SERVICE_ROLE_ARN}"
-  if [ -n "${AWS_DEPLOYMENT_CONFIG_NAME}" ]; then DEPLOY_CMD="${DEPLOY_CMD} --deployment-config-name ${AWS_DEPLOYMENT_CONFIG_NAME}"; fi
-  if [ -n "${AWS_AUTO_SCALING_GROUPS}" ]; then DEPLOY_CMD="$DEPLOY_CMD --auto-scaling-groups ${AWS_AUTO_SCALING_GROUPS}"; fi
-  if [ -n "${AWS_EC2_TAG_FILTERS}" ]; then DEPLOY_CMD="$DEPLOY_CMD --ec2-tag-filters ${AWS_EC2_TAG_FILTERS}"; fi
+  DEPLOY_CMD="aws deploy create-deployment-group --application-name ${WERCKER_DEPLOY_VIA_CODEDEPLOY_APPLICATION_NAME} --deployment-group-name ${WERCKER_DEPLOY_VIA_CODEDEPLOY_DEPLOYMENT_GROUP} --service-role-arn ${WERCKER_DEPLOY_VIA_CODEDEPLOY_SERVICE_ROLE_ARN}"
+  if [ -n "${WERCKER_DEPLOY_VIA_CODEDEPLOY_DEPLOYMENT_CONFIG_NAME}" ]; then DEPLOY_CMD="${DEPLOY_CMD} --deployment-config-name ${WERCKER_DEPLOY_VIA_CODEDEPLOY_DEPLOYMENT_CONFIG_NAME}"; fi
+  if [ -n "${WERCKER_DEPLOY_VIA_CODEDEPLOY_AUTO_SCALING_GROUPS}" ]; then DEPLOY_CMD="$DEPLOY_CMD --auto-scaling-groups ${WERCKER_DEPLOY_VIA_CODEDEPLOY_AUTO_SCALING_GROUPS}"; fi
+  if [ -n "${WERCKER_DEPLOY_VIA_CODEDEPLOY_EC2_TAG_FILTERS}" ]; then DEPLOY_CMD="$DEPLOY_CMD --ec2-tag-filters ${WERCKER_DEPLOY_VIA_CODEDEPLOY_EC2_TAG_FILTERS}"; fi
   ${DEPLOY_CMD} || error "create-deployment-group failed"
 fi
 
 # ---------------------------------------------------------------------------
 # Zips and uploads file to S3
-PUSH_CMD="aws deploy push --application-name ${AWS_APPLICATION_NAME} --s3-location s3://${AWS_S3_BUCKET}/${AWS_S3_KEY} --source ${APP_SOURCE_LOCATION}"
-if [ -n ${AWS_REVISION_DESCRIPTION} ]; then PUSH_CMD="${PUSH_CMD} --description \"${AWS_REVISION_DESCRIPTION}\""; fi
+PUSH_CMD="aws deploy push --application-name ${WERCKER_DEPLOY_VIA_CODEDEPLOY_APPLICATION_NAME} --s3-location s3://${WERCKER_DEPLOY_VIA_CODEDEPLOY_S3_BUCKET}/${WERCKER_DEPLOY_VIA_CODEDEPLOY_S3_KEY} --source ${APP_SOURCE_LOCATION}"
+if [ -n ${WERCKER_DEPLOY_VIA_CODEDEPLOY_REVISION_DESCRIPTION} ]; then PUSH_CMD="${PUSH_CMD} --description \"${WERCKER_DEPLOY_VIA_CODEDEPLOY_REVISION_DESCRIPTION}\""; fi
 ${PUSH_CMD} || error "Push failed."
 
 # ---------------------------------------------------------------------------
-S3_LOCATION="bucket=${AWS_S3_BUCKET},bundleType=${AWS_BUNDLE_TYPE},key=${AWS_S3_KEY}"
-aws deploy register-application-revision --application-name ${AWS_APPLICATION_NAME} --s3-location ${S3_LOCATION} --description "${AWS_REVISION_DESCRIPTION}" || error "register-application-revision failed"
+S3_LOCATION="bucket=${WERCKER_DEPLOY_VIA_CODEDEPLOY_S3_BUCKET},bundleType=${WERCKER_DEPLOY_VIA_CODEDEPLOY_BUNDLE_TYPE},key=${WERCKER_DEPLOY_VIA_CODEDEPLOY_S3_KEY}"
+aws deploy register-application-revision --application-name ${WERCKER_DEPLOY_VIA_CODEDEPLOY_APPLICATION_NAME} --s3-location ${S3_LOCATION} --description "${WERCKER_DEPLOY_VIA_CODEDEPLOY_REVISION_DESCRIPTION}" || error "register-application-revision failed"
 
 # ---------------------------------------------------------------------------
-DEPLOYMENT_ID=$(aws deploy create-deployment --application-name ${AWS_APPLICATION_NAME} \
-              --deployment-config-name ${AWS_DEPLOYMENT_CONFIG_NAME} \
-              --deployment-group-name ${AWS_DEPLOYMENT_GROUP} \
+DEPLOYMENT_ID=$(aws deploy create-deployment --application-name ${WERCKER_DEPLOY_VIA_CODEDEPLOY_APPLICATION_NAME} \
+              --deployment-config-name ${WERCKER_DEPLOY_VIA_CODEDEPLOY_DEPLOYMENT_CONFIG_NAME} \
+              --deployment-group-name ${WERCKER_DEPLOY_VIA_CODEDEPLOY_DEPLOYMENT_GROUP} \
               --s3-location ${S3_LOCATION} \
-              --description "${AWS_DEPLOYMENT_DESCRIPTION}" \
+              --description "${WERCKER_DEPLOY_VIA_CODEDEPLOY_DEPLOYMENT_DESCRIPTION}" \
               --output text --query deploymentId) \
               || error "Warning. Deployment not started"
 
