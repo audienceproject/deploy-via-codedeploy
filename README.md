@@ -1,21 +1,49 @@
 # Deploy via CodeDeploy
 
-A Wercker step for deploying an artefact stored in S3 with the help of Amazon CodeDeploy.
-As a prerequisite, the [AWS Command Line Interface](https://aws.amazon.com/cli/) needs to be already configured with the details of a user which has sufficient _AWS CodeDeploy_ management privileges.
+A Wercker step for creating and deploying an artefact with the help of Amazon CodeDeploy.
+The prerequisite [AWS Command Line Interface](https://aws.amazon.com/cli/) will be installed and configured by the step. 
 
 The step takes the following arguments:
+# For configuring AWS CLI
+* **wercker_aws_access_key**: The AWS access key for Werker to use
+* **wercker_aws_secret_access_key**: The AWS secret access key for Werker to use
+# Setup application
+* **aws_application_name**: The name of the application in CodeDeploy
+# Setup deployment config
+* **aws_deployment_config_name**: The name of the deployment configuration in CodeDeploy
+* **aws_minimum_healthy_hosts**: (optional) The minimum number of healthy hosts during deployment
+# Setup deployment group
+* **aws_deployment_group**: Name of the deployment group in CodeDeploy
+* **aws_service_role_arn**: The service role ARN to use
+* **aws_auto_scaling_groups**: (optional)  
+* **aws_ec2_tag_filters**: (optional)
+# push application
+* **aws_s3_bucket**: The S3 bucket to use when pushing app to S3
+* **aws_s3_key**: The the key that identifies the file on S3 
+* **app_source_location**: the location of the app to bundle and push to S3
+* **aws_revision_description**: (optional) 
+# Register application version    
+* **aws_bundle_type**: The bundle type, defaults to zip
+# Created deployment
+* **aws_deployment_description**: (optional)
 
-* **application-name**: The name of the CodeDeploy application as it can be found in the console.
-* **deployment-group-name** Identifies the target of the deploy (instances where the CodeDeploy agent runs).
-* **s3-artefact**: The S3 path to the artefact that is to be deployed.
-* **bundle-type** By default it is `zip`, can be changed according to the documentation in the [Amazon Command Line Interface](http://docs.aws.amazon.com/cli/latest/reference/deploy/create-deployment.html).
+For more info, see [Amazon Command Line Interface](http://docs.aws.amazon.com/cli/latest/reference/deploy)
 
 ## Example
 
 ```
 steps:
     - audienceproject/deploy-via-codedeploy:
-        - application-name: My Awesome Processing Engine
-        - deployment-group-name: MyFleet
-        - s3-artefact: s3://organization-storage/apps/engine.zip
+        - wercker_aws_access_key: <AWS ACCESS KEY>
+        - wercker_aws_secret_access_key: <AWS ACCESS KEY>
+        - aws_application_name: DemoApp
+        - aws_deployment_config_name: DemoApp
+        - aws_deployment_group: DemoAppGroup
+        - aws_service_role_arn: arn:aws:iam::80398EXAMPLE:role/CodeDeployDemoRole
+        - aws_deployment_config_name: DemoAppConfig                         
+        - aws_ec2_tag_filters: Key=Name,Value=DemoServer,Type=KEY_AND_VALUE 
+        - aws_s3_bucket: my-apps-bucket
+        - aws_s3_key: demoapp/demoapp.zip
+        - app_source_location: /tmp/myapp/
+        - aws_bundle_type: zip
 ```

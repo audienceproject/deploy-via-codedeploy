@@ -1,20 +1,62 @@
 name: deploy-via-codedeploy
-version: 1.0.0
-description: A Wercker step for deploying an artefact stored in S3 with the help of Amazon CodeDeploy.
+version: 2.0.0
+description: A Wercker step for creating and deploying an artefact with the help of Amazon CodeDeploy.
 keywords:
   - aws
   - codedeploy
 properties:
-  application-name:
+# Configure AWSCLI
+  wercker_aws_access_key:
     type: string
     required: true
-  deployment-group-name:
+  wercker_aws_secret_access_key:
     type: string
     required: true
-  s3-artefact:
+# Setup application
+  aws_application_name:
     type: string
     required: true
-  bundle-type:
+# Setup deployment config
+  aws_deployment_config_name:
+    type: string
+    required: true
+  aws_minimum_healthy_hosts:
     type: string
     required: false
-    default: zip
+# Setup deployment group
+  aws_deployment_group:
+    type: string
+    required: true
+  aws_service_role_arn:
+    type: string
+    required: true
+  aws_deployment_config_name:
+    type: string
+    required: false
+  aws_auto_scaling_groups:
+    type: string
+    required: false
+  aws_ec2_tag_filters:
+    type: string
+    required: false
+# push application
+  aws_s3_bucket:
+    type: string
+    required: true
+  aws_s3_key:
+    type: string
+    required: true
+  app_source_location:
+    type: string
+    required: true
+  aws_revision_description:
+    type: string
+    required: false
+# Register application version    
+  aws_bundle_type:
+    type: string
+    required: true
+# Created deployment
+  aws_deployment_description:
+    type: string
+    required: false
