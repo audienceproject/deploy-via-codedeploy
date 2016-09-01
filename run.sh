@@ -121,12 +121,13 @@ fi
 
 # ---------------------------------------------------------------------------
 # Zips and uploads file to S3
-PUSH_CMD="aws deploy push --application-name ${WERCKER_DEPLOY_VIA_CODEDEPLOY_APPLICATION_NAME} --s3-location s3://${WERCKER_DEPLOY_VIA_CODEDEPLOY_S3_BUCKET}/${WERCKER_DEPLOY_VIA_CODEDEPLOY_S3_KEY} --source ${WERCKER_DEPLOY_VIA_CODEDEPLOY_APP_SOURCE_LOCATION}"
+S3_KEY="${WERCKER_DEPLOY_VIA_CODEDEPLOY_S3_KEY}/$(git descibe)/${WERCKER_DEPLOY_VIA_CODEDEPLOY_APPLICATION_NAME}.${WERCKER_DEPLOY_VIA_CODEDEPLOY_BUNDLE_TYPE}"
+PUSH_CMD="aws deploy push --application-name ${WERCKER_DEPLOY_VIA_CODEDEPLOY_APPLICATION_NAME} --s3-location s3://${WERCKER_DEPLOY_VIA_CODEDEPLOY_S3_BUCKET}/${S3_KEY} --source ${WERCKER_DEPLOY_VIA_CODEDEPLOY_APP_SOURCE_LOCATION}"
 if [ -n ${WERCKER_DEPLOY_VIA_CODEDEPLOY_REVISION_DESCRIPTION} ]; then PUSH_CMD="${PUSH_CMD} --description \"${WERCKER_DEPLOY_VIA_CODEDEPLOY_REVISION_DESCRIPTION}\""; fi
 ${PUSH_CMD} || error "Push failed."
 
 # ---------------------------------------------------------------------------
-S3_LOCATION="bucket=${WERCKER_DEPLOY_VIA_CODEDEPLOY_S3_BUCKET},bundleType=${WERCKER_DEPLOY_VIA_CODEDEPLOY_BUNDLE_TYPE},key=${WERCKER_DEPLOY_VIA_CODEDEPLOY_S3_KEY}"
+S3_LOCATION="bucket=${WERCKER_DEPLOY_VIA_CODEDEPLOY_S3_BUCKET},bundleType=${WERCKER_DEPLOY_VIA_CODEDEPLOY_BUNDLE_TYPE},key=${S3_KEY}"
 aws deploy register-application-revision --application-name ${WERCKER_DEPLOY_VIA_CODEDEPLOY_APPLICATION_NAME} --s3-location ${S3_LOCATION} --description "${WERCKER_DEPLOY_VIA_CODEDEPLOY_REVISION_DESCRIPTION}" || error "register-application-revision failed"
 
 # ---------------------------------------------------------------------------
