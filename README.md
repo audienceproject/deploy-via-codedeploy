@@ -27,7 +27,7 @@ The step takes the following arguments:
 * **app-source-location**: the location of the app to bundle and push to S3
 * **revision-description**: (optional) 
 
-The location on S3 vil be `s3://$s3-bucket/$s3-key/<git revision>$application-name.$bundle-type`.
+The location on S3 vil be `s3://$s3-bucket/$s3-key/$application-name.$bundle-type`.
 
 # Register application version    
 * **bundle-type**: The bundle type, defaults to zip
